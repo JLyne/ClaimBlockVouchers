@@ -4,6 +4,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import uk.co.notnull.CustomItems.api.items.AbstractCustomItem;
 import uk.co.notnull.CustomItems.api.items.CreationContext;
+import uk.co.notnull.claimblockvouchers.denominations.VoucherDenomination;
 
 public class VoucherCustomItem extends AbstractCustomItem {
     private final VoucherDenomination denomination;

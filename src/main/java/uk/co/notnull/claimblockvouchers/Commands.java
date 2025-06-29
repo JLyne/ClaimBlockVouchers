@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import uk.co.notnull.claimblockvouchers.denominations.VoucherDenomination;
 import uk.co.notnull.messageshelper.Message;
 
 import java.util.List;
@@ -26,7 +27,9 @@ public class Commands {
 	public Commands(io.papermc.paper.command.brigadier.Commands commands, ClaimBlockVouchers plugin) {
 		this.plugin = plugin;
 
-		VoucherDenominationArgumentType voucherDenominationArgumentType = new VoucherDenominationArgumentType();
+		VoucherDenominationArgumentType voucherDenominationArgumentType =
+				new VoucherDenominationArgumentType(plugin.getVoucherManager());
+
 		LiteralCommandNode<CommandSourceStack> giveCommand = literal("givevoucher")
 				.requires(source -> source.getSender().hasPermission("claimblockvouchers.give"))
 				.then(argument("player", ArgumentTypes.players())
@@ -37,7 +40,12 @@ public class Commands {
 																  ctx, ctx.getArgument("amount", Integer.class)
 														  ))))).build();
 
+		LiteralCommandNode<CommandSourceStack> reloadCommand = literal("cbvreload")
+				.requires(source -> source.getSender().hasPermission("claimblockvouchers.reload"))
+				.executes(this::reload).build();
+
 		commands.register(giveCommand, "Give claim block vouchers to players");
+		commands.register(reloadCommand, "Reload claim block vouchers config");
 	}
 
 	private int giveVoucher(CommandContext<CommandSourceStack> ctx, int quantity) throws CommandSyntaxException {
@@ -81,6 +89,14 @@ public class Commands {
 				.replacement("item", item.displayName())
 				.replacement("quantity", String.valueOf(quantity))
 				.build());
+
+		return Command.SINGLE_SUCCESS;
+	}
+	private int reload(CommandContext<CommandSourceStack> ctx) {
+		plugin.reload();
+
+		plugin.messagesHelper.send(ctx.getSource().getSender(),
+								   Message.builder("messages.reload-success").build());
 
 		return Command.SINGLE_SUCCESS;
 	}

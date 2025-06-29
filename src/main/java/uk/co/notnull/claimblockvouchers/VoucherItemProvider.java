@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import uk.co.notnull.CustomItems.api.items.CustomItem;
 import uk.co.notnull.CustomItems.api.items.provider.CustomItemProvider;
+import uk.co.notnull.claimblockvouchers.denominations.VoucherDenomination;
 
 public class VoucherItemProvider implements CustomItemProvider {
     private final VoucherManager manager;
@@ -16,7 +17,7 @@ public class VoucherItemProvider implements CustomItemProvider {
     public VoucherItemProvider(VoucherManager manager) {
         this.manager = manager;
 
-        for (VoucherDenomination denomination : VoucherDenomination.values()) {
+        for (VoucherDenomination denomination : manager.getConfiguredDenominations().values()) {
             items.put(denomination, new VoucherCustomItem(denomination));
         }
     }

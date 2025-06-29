@@ -12,12 +12,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
+import uk.co.notnull.claimblockvouchers.denominations.CustomDenomination;
+import uk.co.notnull.claimblockvouchers.denominations.VoucherDenomination;
 import uk.co.notnull.messageshelper.Message;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("UnstableApiUsage")
 public class VoucherManager {
     private final ClaimBlockVouchers plugin;
     private final NamespacedKey voucherKey;
+    private final HashMap<Integer, VoucherDenomination> denominations = new HashMap<>();
+    private CustomDenomination customDenomination;
 
     public VoucherManager(ClaimBlockVouchers plugin) {
         this.plugin = plugin;
@@ -28,12 +34,18 @@ public class VoucherManager {
         ItemStack item = new ItemStack(Material.FEATHER, 1);
 
         item.setData(DataComponentTypes.ITEM_NAME, denomination.getItemName());
+        item.setData(DataComponentTypes.RARITY, denomination.getRarity());
         item.setData(DataComponentTypes.LORE, ItemLore.lore(denomination.getLore()));
-        item.setData(DataComponentTypes.ITEM_MODEL, denomination.getItemModel());
-        item.setData(DataComponentTypes.CUSTOM_MODEL_DATA,
-            CustomModelData.customModelData().addString(denomination.getCustomModelData()));
+
+        if (denomination.getItemModel() != null) {
+            item.setData(DataComponentTypes.ITEM_MODEL, denomination.getItemModel());
+        }
+
+        item.setData(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelData.customModelData()
+            .addString(String.valueOf(denomination.getBlockCount())));
         item.editPersistentDataContainer(
-            pdc -> pdc.set(voucherKey, PersistentDataType.INTEGER, denomination.getBlockCount()));
+            pdc -> pdc.set(voucherKey, PersistentDataType.INTEGER,
+                denomination.getBlockCount()));
 
         return item;
     }
@@ -47,9 +59,14 @@ public class VoucherManager {
             return null;
         }
 
-        return VoucherDenomination.valueOf(
-            item.getPersistentDataContainer().get(voucherKey, PersistentDataType.INTEGER)
-        );
+        Integer blockCount = item.getPersistentDataContainer()
+            .get(voucherKey, PersistentDataType.INTEGER);
+
+        if (blockCount == null) {
+            return null;
+        }
+
+        return denominations.getOrDefault(blockCount, customDenomination.customDenomination(blockCount));
     }
 
     public void redeemVoucher(Player player, ItemStack voucher) {
@@ -75,5 +92,19 @@ public class VoucherManager {
         GriefPrevention.AddLogEntry(
             "Player " + player.getName() + " redeemed a voucher for " + denomination.getBlockCount()
                 + " claim blocks", CustomLogEntryTypes.Debug);
+    }
+
+    void setDenominations(CustomDenomination customDenomination, Map<Integer, VoucherDenomination> configured) {
+        denominations.clear();
+        denominations.putAll(configured);
+        this.customDenomination = customDenomination;
+    }
+
+    CustomDenomination getCustomDenomination() {
+        return customDenomination;
+    }
+
+    HashMap<Integer, VoucherDenomination> getConfiguredDenominations() {
+        return denominations;
     }
 }
