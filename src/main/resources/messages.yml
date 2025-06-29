@@ -1,0 +1,4 @@
+messages:
+    voucher-redeemed: "<bold><green>Claims > <reset><light_purple>Voucher redeemed. You now have <green><total><light_purple> available claim blocks."
+    voucher-given-single: "<lang:commands.give.success.single:'<quantity>':'<item>':'<player>'>"
+    voucher-given-multiple: "<lang:commands.give.success.multiple:'<quantity>':'<item>':'<player_count>'>"
