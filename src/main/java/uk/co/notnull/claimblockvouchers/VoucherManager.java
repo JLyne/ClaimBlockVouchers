@@ -31,7 +31,7 @@ public class VoucherManager {
     }
 
     public ItemStack createVoucher(VoucherDenomination denomination) {
-        ItemStack item = new ItemStack(Material.FEATHER, 1);
+        ItemStack item = ItemStack.of(Material.FEATHER);
 
         item.setData(DataComponentTypes.ITEM_NAME, denomination.getItemName());
         item.setData(DataComponentTypes.RARITY, denomination.getRarity());
