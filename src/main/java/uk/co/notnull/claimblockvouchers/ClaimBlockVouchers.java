@@ -22,12 +22,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-@SuppressWarnings("UnstableApiUsage")
 public final class ClaimBlockVouchers extends JavaPlugin implements Listener {
 	private static ClaimBlockVouchers instance;
 
 	private VoucherManager voucherManager;
-	MessagesHelper messagesHelper = MessagesHelper.getInstance(this);
+	final MessagesHelper messagesHelper = MessagesHelper.getInstance(this);
 	private CustomItemsHandler customItemsHandler;
 
 	@Override
@@ -122,47 +121,49 @@ public final class ClaimBlockVouchers extends JavaPlugin implements Listener {
 																	   defaultRarity, defaultLore);
 
 		if (getConfig().contains("denominations")) {
-			getConfig().getConfigurationSection("denominations").getValues(false).entrySet().forEach(entry -> {
-				if (!(entry.getValue() instanceof ConfigurationSection section)) {
-					getLogger().warning("Invalid config for denomination " + entry.getKey());
-					return;
-				}
+			getConfig().getConfigurationSection("denominations").getValues(false)
+                .forEach((key, value) -> {
+                    if (!(value instanceof ConfigurationSection section)) {
+                        getLogger().warning("Invalid config for denomination " + key);
+                        return;
+                    }
 
-				int blockCount = section.getInt("block-count");
+                    int blockCount = section.getInt("block-count");
 
-				if (blockCount == 0) {
-					getLogger().warning("Invalid block-count for denomination " + entry.getKey());
-					return;
-				}
+                    if (blockCount == 0) {
+                        getLogger().warning("Invalid block-count for denomination " + key);
+                        return;
+                    }
 
-				String itemName = section.getString("item-name", defaultItemName);
+                    String itemName = section.getString("item-name", defaultItemName);
 
-				NamespacedKey itemModel = defaultItemModel;
+                    NamespacedKey itemModel = defaultItemModel;
 
-				if (section.contains("item-model")) {
-					itemModel = NamespacedKey.fromString(section.getString("item-name", ""));
-				}
+                    if (section.contains("item-model")) {
+                        itemModel = NamespacedKey.fromString(section.getString("item-name", ""));
+                    }
 
-				ItemRarity denominationRarity = defaultRarity;
+                    ItemRarity denominationRarity = defaultRarity;
 
-				if (section.contains("rarity")) {
-					try {
-						denominationRarity = ItemRarity.valueOf(
-								section.getString("rarity", ItemRarity.COMMON.name()));
-					} catch (IllegalArgumentException e) {
-						getLogger().warning("Invalid rarity for denomination " + entry.getKey());
-					}
-				}
+                    if (section.contains("rarity")) {
+                        try {
+                            denominationRarity = ItemRarity.valueOf(
+                                section.getString("rarity", ItemRarity.COMMON.name()));
+                        } catch (IllegalArgumentException e) {
+                            getLogger().warning("Invalid rarity for denomination " + key);
+                        }
+                    }
 
-				List<String> lore = defaultLore;
+                    List<String> lore = defaultLore;
 
-				if (section.contains("lore")) {
-					lore = section.getStringList("lore");
-				}
+                    if (section.contains("lore")) {
+                        lore = section.getStringList("lore");
+                    }
 
-				denominations.put(blockCount, new VoucherDenomination(blockCount, itemName, itemModel,
-																	  denominationRarity, lore));
-			});
+                    denominations.put(blockCount,
+                        new VoucherDenomination(blockCount, itemName, itemModel,
+                            denominationRarity, lore));
+                });
 		}
 
 		voucherManager.setDenominations(customDenomination, denominations);

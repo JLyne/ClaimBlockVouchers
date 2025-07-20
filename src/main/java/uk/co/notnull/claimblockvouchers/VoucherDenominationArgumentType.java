@@ -14,7 +14,6 @@ import uk.co.notnull.claimblockvouchers.denominations.VoucherDenomination;
  *
  * @since 1.1.0
  */
-@SuppressWarnings("UnstableApiUsage")
 public final class VoucherDenominationArgumentType implements CustomArgumentType.Converted<VoucherDenomination, Integer> {
     private final VoucherManager manager;
 

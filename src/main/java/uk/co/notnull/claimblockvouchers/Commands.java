@@ -20,7 +20,6 @@ import java.util.List;
 import static io.papermc.paper.command.brigadier.Commands.argument;
 import static io.papermc.paper.command.brigadier.Commands.literal;
 
-@SuppressWarnings("UnstableApiUsage")
 public class Commands {
 	private final ClaimBlockVouchers plugin;
 

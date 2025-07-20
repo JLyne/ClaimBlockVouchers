@@ -3,7 +3,7 @@ package uk.co.notnull.claimblockvouchers;
 import org.bukkit.Bukkit;
 import uk.co.notnull.CustomItems.api.CustomItems;
 
-public final class CustomItemsHandler {;
+public final class CustomItemsHandler {
 	private final VoucherItemProvider provider;
 	private final CustomItems customItems = (CustomItems) Bukkit.getPluginManager().getPlugin("CustomItems");
 
