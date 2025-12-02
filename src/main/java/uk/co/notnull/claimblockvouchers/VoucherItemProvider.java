@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.co.notnull.CustomItems.api.items.CustomItem;
@@ -25,7 +25,7 @@ public class VoucherItemProvider implements CustomItemProvider {
     }
 
     @Override
-    public @NotNull JavaPlugin getPlugin() {
+    public @NotNull Plugin getPlugin() {
         return ClaimBlockVouchers.getInstance();
     }
 
