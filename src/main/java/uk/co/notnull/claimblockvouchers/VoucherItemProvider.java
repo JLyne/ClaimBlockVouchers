@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.co.notnull.CustomItems.api.items.CustomItem;
 import uk.co.notnull.CustomItems.api.items.provider.CustomItemProvider;
@@ -23,7 +25,12 @@ public class VoucherItemProvider implements CustomItemProvider {
     }
 
     @Override
-    public List<CustomItem> provideItems() {
+    public @NotNull JavaPlugin getPlugin() {
+        return ClaimBlockVouchers.getInstance();
+    }
+
+    @Override
+    public @NotNull List<CustomItem> provideItems() {
         return new ArrayList<>(items.values());
     }
 

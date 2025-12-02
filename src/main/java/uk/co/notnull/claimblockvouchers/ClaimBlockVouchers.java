@@ -18,9 +18,11 @@ import uk.co.notnull.claimblockvouchers.denominations.VoucherDenomination;
 import uk.co.notnull.messageshelper.MessagesHelper;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 public final class ClaimBlockVouchers extends JavaPlugin implements Listener {
 	private static ClaimBlockVouchers instance;
@@ -42,9 +44,13 @@ public final class ClaimBlockVouchers extends JavaPlugin implements Listener {
 
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().getPluginManager().registerEvents(new VoucherEventHandler(this), this);
-        messagesHelper.loadMessages(messages);
+        try {
+            messagesHelper.loadMessages(messages);
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Failed to load messages", e);
+        }
 
-		LifecycleEventManager<@NotNull Plugin> manager = getLifecycleManager();
+        LifecycleEventManager<@NotNull Plugin> manager = getLifecycleManager();
 		manager.registerEventHandler(LifecycleEvents.COMMANDS,
 									 event -> new Commands(event.registrar(), this));
 		reload();
