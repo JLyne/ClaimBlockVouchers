@@ -53,6 +53,13 @@ public class Commands {
 		List<Player> players = resolver.resolve(ctx.getSource());
 		ItemStack item = plugin.getVoucherManager().createVoucher(denomination);
 
+        if (players.isEmpty()) {
+            ctx.getSource().getSender()
+                .sendMessage(Component.translatable("argument.entity.notfound.player")
+                    .color(NamedTextColor.RED));
+            return Command.SINGLE_SUCCESS;
+        }
+
 		if (quantity > item.getMaxStackSize() * 100) {
 			ctx.getSource().getSender().sendMessage(
 					Component.translatable("commands.give.failed.toomanyitems")
@@ -72,22 +79,14 @@ public class Commands {
 						.forEach(leftover -> player.getLocation().getWorld()
 								.dropItemNaturally(player.getLocation(), leftover));
 			}
+
+            plugin.messagesHelper.send(ctx.getSource().getSender(),
+                Message.builder("messages.voucher-given")
+                    .replacement("player", players.getFirst().displayName())
+                    .replacement("item", item.displayName())
+				    .replacement("quantity", String.valueOf(quantity))
+                    .build());
 		}
-
-		Message.Builder builder;
-
-		if (players.size() > 1) {
-			builder = Message.builder("messages.voucher-given-multiple")
-					.replacement("player_count", String.valueOf(players.size()));
-		} else {
-			builder = Message.builder("messages.voucher-given-single")
-					.replacement("player", players.getFirst().displayName());
-		}
-
-		plugin.messagesHelper.send(ctx.getSource().getSender(), builder
-				.replacement("item", item.displayName())
-				.replacement("quantity", String.valueOf(quantity))
-				.build());
 
 		return Command.SINGLE_SUCCESS;
 	}
