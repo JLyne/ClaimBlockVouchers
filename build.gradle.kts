@@ -58,6 +58,11 @@ paper {
     permissions {
         register("claimblockvouchers.give") {
             default = BukkitPluginDescription.Permission.Default.OP
+            description = "Allows use of /givevoucher"
+        }
+        register("claimblockvouchers.reload") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            description = "Allows use of /cbvreload"
         }
     }
 }
