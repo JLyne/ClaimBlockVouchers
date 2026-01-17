@@ -22,6 +22,10 @@ public class VoucherDenomination {
 	public VoucherDenomination(
 			int blockCount, @NotNull String itemName, @Nullable NamespacedKey itemModel,
 			@NotNull ItemRarity rarity, @NotNull List<String> lore) {
+        if (blockCount <= 0) {
+            throw new IllegalArgumentException("blockCount must be positive");
+        }
+
 		this.blockCount = blockCount;
 		this.itemName = miniMessage.deserialize(itemName,
 												Placeholder.unparsed("block_count", String.valueOf(blockCount)));

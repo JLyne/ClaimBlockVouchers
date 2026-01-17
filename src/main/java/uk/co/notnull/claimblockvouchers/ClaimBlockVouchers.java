@@ -11,6 +11,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.inventory.ItemRarity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
 import uk.co.notnull.claimblockvouchers.denominations.CustomDenomination;
@@ -28,6 +29,7 @@ public final class ClaimBlockVouchers extends JavaPlugin implements Listener {
 	private static ClaimBlockVouchers instance;
 
 	private VoucherManager voucherManager;
+	private CreateVoucherDialog createVoucherDialog;
 	final MessagesHelper messagesHelper = MessagesHelper.getInstance(this);
 	private CustomItemsHandler customItemsHandler;
 
@@ -35,25 +37,28 @@ public final class ClaimBlockVouchers extends JavaPlugin implements Listener {
 	public void onEnable() {
 		initConfig();
 		instance = this;
-		voucherManager = new VoucherManager(this);
 
 		File messages = new File(getDataFolder(), "messages.yml");
         if(!messages.exists()) {
             saveResource("messages.yml", false);
         }
 
-		getServer().getPluginManager().registerEvents(this, this);
-		getServer().getPluginManager().registerEvents(new VoucherEventHandler(this), this);
         try {
             messagesHelper.loadMessages(messages);
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Failed to load messages", e);
         }
 
+		voucherManager = new VoucherManager(this);
+        createVoucherDialog = new CreateVoucherDialog(this);
+		reload();
+
+		getServer().getPluginManager().registerEvents(this, this);
+		getServer().getPluginManager().registerEvents(new VoucherEventHandler(this), this);
+
         LifecycleEventManager<@NotNull Plugin> manager = getLifecycleManager();
 		manager.registerEventHandler(LifecycleEvents.COMMANDS,
 									 event -> new Commands(event.registrar(), this));
-		reload();
 	}
 
 	@Override
@@ -104,6 +109,7 @@ public final class ClaimBlockVouchers extends JavaPlugin implements Listener {
 		initDenominations();
 		disableCustomItems();
 		enableCustomItems();
+        createVoucherDialog.reload();
 	}
 
 	private void initDenominations() {
@@ -192,6 +198,10 @@ public final class ClaimBlockVouchers extends JavaPlugin implements Listener {
 
 	public VoucherManager getVoucherManager() {
 		return voucherManager;
+	}
+
+	CreateVoucherDialog getCreateVoucherDialog() {
+		return createVoucherDialog;
 	}
 
 	public static ClaimBlockVouchers getInstance() {

@@ -1,4 +1,31 @@
 messages:
     voucher-redeemed: "<bold><green>Claims > <reset><light_purple>Voucher redeemed. You now have <green><total><light_purple> available claim blocks."
+    voucher-created: "<bold><green>Claims > <reset><light_purple>Created a <blocks> Claim Block Voucher. You now have <green><total><light_purple> available claim blocks."
     voucher-given: "<lang:commands.give.success.single:'<quantity>':'<item>':'<player>'>"
+    insufficient-claim-blocks: "<bold><red>Claims > <reset><yellow>You do not have enough claim blocks to create a voucher."
+    invalid-value: "Please enter a valid claim block amount"
+    dialog-opened: "Opened the create claim block voucher dialog for <player>."
     reload-success: "<lang:commands.reload.success>"
+dialog:
+    common:
+        blocks-available: "You currently have <yellow><total><reset> claim blocks."
+        insufficient-claim-blocks: "<red>You do not have enough claim blocks to create this voucher"
+        voucher-created: "<green>Voucher created"
+    create:
+        title: "Create Claim Block Voucher"
+        intro: "You can use your claim block balance to create a <yellow>Claim Block Voucher<reset> to give or sell to other players.<br><br>Use the below buttons to select the number of blocks to apply to the voucher."
+        denomination-button-label: "<amount> block(s)"
+        denomination-button-tooltip: "Create a Claim Block Voucher worth <amount> block(s)"
+        all-button-label: "<amount> block(s)"
+        all-button-tooltip: "Create a Claim Block Voucher worth <amount> block(s)"
+        custom-button-label: "Other"
+        custom-button-tooltip: "Create a Claim Block Voucher for a custom amount"
+        exit-button-label: "Done"
+    custom:
+        title: "Create Custom Claim Block Voucher"
+        intro: "You can use your claim block balance to create a <yellow>Claim Block Voucher<reset> to give or sell to other players.<br><br>Enter the amount of blocks to apply to the voucher below."
+        input-label: "Claim block amount"
+        invalid-value: "<red>Please enter a valid claim block amount"
+        create-label: "Create voucher"
+        create-tooltip: "Create a Claim Block Voucher worth the entered amount of claim blocks"
+        exit-button-label: "Back"

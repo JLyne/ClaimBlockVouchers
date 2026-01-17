@@ -2,9 +2,13 @@ package uk.co.notnull.claimblockvouchers;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.mojang.brigadier.Message;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import io.papermc.paper.command.brigadier.MessageComponentSerializer;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import org.jetbrains.annotations.NotNull;
 import uk.co.notnull.claimblockvouchers.denominations.VoucherDenomination;
@@ -22,9 +26,15 @@ public final class VoucherDenominationArgumentType implements CustomArgumentType
     }
 
 	@Override
-	public @NotNull VoucherDenomination convert(@NotNull Integer input) {
-        return manager.getConfiguredDenominations()
-            .getOrDefault(input, manager.getCustomDenomination().customDenomination(input));
+	public @NotNull VoucherDenomination convert(@NotNull Integer input) throws CommandSyntaxException {
+        try {
+            return manager.getConfiguredDenominations()
+                .getOrDefault(input, manager.getCustomDenomination().customDenomination(input));
+        } catch (IllegalArgumentException e) {
+            final Message message = MessageComponentSerializer.message().serialize(
+                ClaimBlockVouchers.getInstance().messagesHelper.getComponent("messages.invalid-value"));
+            throw new SimpleCommandExceptionType(message).create();
+        }
 	}
 
 	@Override

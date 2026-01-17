@@ -8,7 +8,10 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import me.ryanhamshire.GriefPrevention.PlayerData;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,11 +42,25 @@ public class Commands {
 																  ctx, ctx.getArgument("amount", Integer.class)
 														  ))))).build();
 
+        LiteralCommandNode<CommandSourceStack> createCommand = literal("createvoucher")
+				.requires(source -> source.getSender().hasPermission("claimblockvouchers.create"))
+                .executes(this::openDialog)
+				.then(argument("voucher", voucherDenominationArgumentType)
+                    .executes(this::createVoucher)).build();
+
+        LiteralCommandNode<CommandSourceStack> openCommand = literal("opencreatedialog")
+				.requires(source -> source.getSender().hasPermission("claimblockvouchers.opendialog"))
+				.then(argument("player", ArgumentTypes.players())
+                    .executes(this::openDialogForPlayer))
+        .build();
+
 		LiteralCommandNode<CommandSourceStack> reloadCommand = literal("cbvreload")
 				.requires(source -> source.getSender().hasPermission("claimblockvouchers.reload"))
 				.executes(this::reload).build();
 
 		commands.register(giveCommand, "Give claim block vouchers to players");
+		commands.register(createCommand, "Create a claim block voucher from your available claim blocks");
+		commands.register(openCommand, "Opens the create claim block voucher dialog for a player");
 		commands.register(reloadCommand, "Reload claim block vouchers config");
 	}
 
@@ -90,6 +107,73 @@ public class Commands {
 
 		return Command.SINGLE_SUCCESS;
 	}
+
+    private int openDialogForPlayer(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		PlayerSelectorArgumentResolver resolver = ctx.getArgument("player", PlayerSelectorArgumentResolver.class);
+		List<Player> players = resolver.resolve(ctx.getSource());
+
+        if (players.isEmpty()) {
+            ctx.getSource().getSender()
+                .sendMessage(Component.translatable("argument.entity.notfound.player")
+                    .color(NamedTextColor.RED));
+            return Command.SINGLE_SUCCESS;
+        }
+
+		for (Player player : players) {
+			plugin.getCreateVoucherDialog().open(player);
+            plugin.messagesHelper.send(ctx.getSource().getSender(),
+                Message.builder("messages.dialog-opened")
+                    .replacement("player", players.getFirst().displayName())
+                    .build());
+		}
+
+        return Command.SINGLE_SUCCESS;
+	}
+
+    private int openDialog(CommandContext<CommandSourceStack> ctx) {
+        if (!(ctx.getSource().getSender() instanceof Player player)) {
+            return Command.SINGLE_SUCCESS;
+        }
+
+        PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
+
+        if (playerData.getRemainingClaimBlocks() == 0) {
+            plugin.messagesHelper.send(ctx.getSource().getSender(),
+                Message.builder("messages.insufficient-claim-blocks").build());
+
+            return Command.SINGLE_SUCCESS;
+        }
+
+        plugin.getCreateVoucherDialog().open(player);
+
+		return Command.SINGLE_SUCCESS;
+	}
+
+    private int createVoucher(CommandContext<CommandSourceStack> ctx) {
+        if (!(ctx.getSource().getSender() instanceof Player player)) {
+            return Command.SINGLE_SUCCESS;
+        }
+
+		VoucherDenomination denomination = ctx.getArgument("voucher", VoucherDenomination.class);
+
+        if (!plugin.getVoucherManager().createVoucherFromBalance(denomination, player)) {
+            plugin.messagesHelper.send(ctx.getSource().getSender(),
+                Message.builder("messages.insufficient-claim-blocks").build());
+
+		    return Command.SINGLE_SUCCESS;
+        }
+
+        PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
+
+		plugin.messagesHelper.send(ctx.getSource().getSender(),
+            Message.builder("messages.voucher-created")
+                .replacement("blocks", String.valueOf(denomination.getBlockCount()))
+                .replacement("total", String.valueOf(playerData.getRemainingClaimBlocks()))
+				.build());
+
+		return Command.SINGLE_SUCCESS;
+	}
+
 	private int reload(CommandContext<CommandSourceStack> ctx) {
 		plugin.reload();
 

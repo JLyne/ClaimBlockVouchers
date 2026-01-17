@@ -14,7 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 import uk.co.notnull.claimblockvouchers.denominations.CustomDenomination;
 import uk.co.notnull.claimblockvouchers.denominations.VoucherDenomination;
-import uk.co.notnull.messageshelper.Message;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +48,29 @@ public class VoucherManager {
                 denomination.getBlockCount()));
 
         return item;
+    }
+
+    public boolean createVoucherFromBalance(VoucherDenomination denomination, Player player) {
+        PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
+
+        if (playerData.getRemainingClaimBlocks() < denomination.getBlockCount()) {
+            return false;
+        }
+
+        ItemStack item = createVoucher(denomination);
+
+        playerData.setBonusClaimBlocks(
+            playerData.getBonusClaimBlocks() - denomination.getBlockCount());
+
+        player.getInventory().addItem(item).values()
+            .forEach(leftover -> player.getLocation().getWorld()
+                .dropItemNaturally(player.getLocation(), leftover));
+
+        GriefPrevention.AddLogEntry(
+            "Player " + player.getName() + " created a voucher for " + denomination.getBlockCount()
+                + " claim blocks from their balance", CustomLogEntryTypes.Debug);
+
+        return true;
     }
 
     public boolean isVoucher(@Nullable ItemStack item) {
@@ -84,11 +107,6 @@ public class VoucherManager {
 
         voucher.subtract();
 
-        //inform player
-        plugin.messagesHelper.send(player, Message.builder("messages.voucher-redeemed")
-            .replacement("total", String.valueOf(playerData.getRemainingClaimBlocks()))
-            .build());
-
         GriefPrevention.AddLogEntry(
             "Player " + player.getName() + " redeemed a voucher for " + denomination.getBlockCount()
                 + " claim blocks", CustomLogEntryTypes.Debug);
@@ -104,7 +122,7 @@ public class VoucherManager {
         return customDenomination;
     }
 
-    HashMap<Integer, VoucherDenomination> getConfiguredDenominations() {
-        return denominations;
+    Map<Integer, VoucherDenomination> getConfiguredDenominations() {
+        return Collections.unmodifiableMap(denominations);
     }
 }

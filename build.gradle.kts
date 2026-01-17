@@ -60,6 +60,14 @@ paper {
             default = BukkitPluginDescription.Permission.Default.OP
             description = "Allows use of /givevoucher"
         }
+        register("claimblockvouchers.create") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+            description = "Allows use of /createvoucher"
+        }
+        register("claimblockvouchers.opendialog") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            description = "Allows use of /opencreatedialog"
+        }
         register("claimblockvouchers.reload") {
             default = BukkitPluginDescription.Permission.Default.OP
             description = "Allows use of /cbvreload"
