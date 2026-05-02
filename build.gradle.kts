@@ -39,7 +39,7 @@ dependencies {
 paper {
     main = "uk.co.notnull.claimblockvouchers.ClaimBlockVouchers"
     loader = "uk.co.notnull.claimblockvouchers.ClaimBlockVouchersLoader"
-    apiVersion = libs.versions.paperApi.get().replace(Regex("\\-R\\d.\\d-SNAPSHOT"), "")
+    apiVersion = libs.versions.paperApi.get().replace(".build.+", "")
     authors = listOf("Jim (AnEnragedPigeon)")
     generateLibrariesJson = true
     description = "Voucher items for redeeming claim blocks."

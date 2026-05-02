@@ -6,10 +6,10 @@ import io.papermc.paper.datacomponent.item.ItemLore;
 import me.ryanhamshire.GriefPrevention.CustomLogEntryTypes;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.PlayerData;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 import uk.co.notnull.claimblockvouchers.denominations.CustomDenomination;
@@ -31,7 +31,7 @@ public class VoucherManager {
     }
 
     public ItemStack createVoucher(VoucherDenomination denomination) {
-        ItemStack item = ItemStack.of(Material.FEATHER);
+        ItemStack item = ItemType.FEATHER.createItemStack();
 
         item.setData(DataComponentTypes.ITEM_NAME, denomination.getItemName());
         item.setData(DataComponentTypes.RARITY, denomination.getRarity());
