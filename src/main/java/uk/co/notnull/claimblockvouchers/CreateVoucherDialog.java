@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("UnstableApiUsage")
 class CreateVoucherDialog {
     private final ClaimBlockVouchers plugin;
 
