@@ -7,7 +7,7 @@ messagesHelper = "1.1-SNAPSHOT"
 
 [libraries]
 paperApi = { group = "io.papermc.paper", name = "paper-api", version.ref = "paperApi" }
-griefPrevention = { group = "com.github.TechFortress", name = "GriefPrevention", version.ref  = "griefPrevention" }
+griefPrevention = { group = "com.github.GriefPrevention", name = "GriefPrevention", version.ref  = "griefPrevention" }
 customItems = { group = "uk.co.notnull", name = "CustomItemsAPI", version.ref  = "customItems" }
 messagesHelper = { group = "uk.co.notnull", name= "MessagesHelper-paper", version.ref = "messagesHelper" }
 
